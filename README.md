@@ -3,16 +3,16 @@
 面向 Agent 的可执行产品管理 Skills。  
 Executable product-management skills for AI agents.
 
-把产品设计原则、哲学、调研与方案规范写成可逐步执行的 playbook，而不是长文笔记。
+把产品设计原则、哲学、调研与方案规范写成可逐步执行的 playbook。
 
 ## Skills
 
 | Skill | 何时使用 |
 |-------|----------|
-| [`product-design-principles`](skills/product-design-principles/SKILL.md) | 提出或批准方案前，强制跑四原则检查 |
-| [`product-design-philosophy`](skills/product-design-philosophy/SKILL.md) | 按场景选用少即是多 / 长期主义 / 控预期 / 叙事，并打分 |
-| [`product-research`](skills/product-research/SKILL.md) | 行业报告、技术文档、竞品分析，直到趋势/机会/差异化齐备 |
-| [`product-spec`](skills/product-spec/SKILL.md) | 写或审 PRD/产品方案，九段模板 + 可测验收闸门 |
+| [`product-design-principles`](skills/product-design-principles/SKILL.md) | 提出、评审或批准方案前，检查问题、复杂度、业务模型和投入回报 |
+| [`product-design-philosophy`](skills/product-design-philosophy/SKILL.md) | 按场景选择四项设计哲学，评分并输出改动 |
+| [`product-research`](skills/product-research/SKILL.md) | 用来源记录、竞品记录和证据链完成产品调研 |
+| [`product-spec`](skills/product-spec/SKILL.md) | 编写或评审 PRD，检查流程、边界和可测验收标准 |
 
 ## 安装 / Install
 
@@ -31,10 +31,10 @@ cp -R skills/* ./.agents/skills/
 
 推荐顺序：
 
-1. `product-design-principles` — 先过硬原则  
-2. `product-design-philosophy` — 按场景打磨（可选）  
-3. `product-research` — 需要市场证据时  
-4. `product-spec` — 输出可开发、可验收的规格  
+1. `product-design-principles` — 检查产品问题、复杂度、业务模型和投入回报
+2. `product-design-philosophy` — 按场景打磨体验和表达
+3. `product-research` — 需要外部证据时执行调研
+4. `product-spec` — 输出可评审、可验收的产品方案
 
 ## 写法参考
 
