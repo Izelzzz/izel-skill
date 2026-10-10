@@ -1,49 +1,42 @@
 # pm-skill
 
-面向 Agent 的可执行产品管理 Skills。  
+面向 Agent 的可执行产品管理 skills。  
 Executable product-management skills for AI agents.
 
-把产品设计原则、哲学、调研与方案规范写成可逐步执行的 playbook，而不是长文笔记。
+教 agent **怎么想、怎么做、做到什么算完**——不是长文笔记，也不是填空表格。
 
 ## Skills
 
-| Skill | 何时使用 |
-|-------|----------|
-| [`product-design-principles`](skills/product-design-principles/SKILL.md) | 提出或批准方案前，强制跑四原则检查 |
-| [`product-design-philosophy`](skills/product-design-philosophy/SKILL.md) | 按场景选用少即是多 / 长期主义 / 控预期 / 叙事，并打分 |
-| [`product-research`](skills/product-research/SKILL.md) | 行业报告、技术文档、竞品分析，直到趋势/机会/差异化齐备 |
-| [`product-spec`](skills/product-spec/SKILL.md) | 写或审 PRD/产品方案，九段模板 + 可测验收闸门 |
+| Skill | 何时用 |
+|-------|--------|
+| [`product-design-principles`](skills/product-design-principles/SKILL.md) | 提出/批准方案前，过四道闸门，有缺口就别说可上线 |
+| [`product-design-philosophy`](skills/product-design-philosophy/SKILL.md) | 方向已定，按场景打磨体验与表达 |
+| [`product-research`](skills/product-research/SKILL.md) | 行业摸底与竞品分析，直到趋势/机会/差异化有出处 |
+| [`product-spec`](skills/product-spec/SKILL.md) | 写或审 PRD：九段活文档 + 可测验收 |
 
-## 安装 / Install
+## Install
 
-将 `skills/` 下各目录复制到你的 Agent skills 路径，例如：
+把 `skills/` 下各目录拷到你的 Agent skills 路径，例如：
 
 ```bash
-# Claude Code / 兼容 Agent Skills 目录的工具
 cp -R skills/* ~/.claude/skills/
 # 或项目内
 cp -R skills/* ./.agents/skills/
 ```
 
-具体路径以你使用的 Agent 产品文档为准。每个 skill 是一个文件夹，内含 `SKILL.md`。
+每个 skill 是一个文件夹，内含 `SKILL.md`。具体路径以你的 Agent 文档为准。
 
-## 使用建议
+## Suggested order
 
-推荐顺序：
-
-1. `product-design-principles` — 先过硬原则  
-2. `product-design-philosophy` — 按场景打磨（可选）  
+1. `product-design-principles` — 该不该做  
+2. `product-design-philosophy` — 做成什么样（按需）  
 3. `product-research` — 需要市场证据时  
-4. `product-spec` — 输出可开发、可验收的规格  
+4. `product-spec` — 可开发、可验收的规格  
 
-## 写法参考
+## Style
 
-格式与结构参考（非抄袭内容）：
-
-- [obra/superpowers](https://github.com/obra/superpowers)
-- [mattpocock/skills](https://github.com/mattpocock/skills)
-
-正文文风受 ASD-STE100 启发：短句、主动语态、MUST/SHOULD 规则。
+写法参考 [obra/superpowers](https://github.com/obra/superpowers)、[mattpocock/skills](https://github.com/mattpocock/skills)。  
+文风受 ASD-STE100 启发：短句、主动语态、一词一义。
 
 ## License
 
