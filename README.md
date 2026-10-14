@@ -13,8 +13,9 @@ Executable product-management skills for AI agents.
 | [`product-design-philosophy`](skills/product-design-philosophy/SKILL.md) | 方向确定后打磨体验与文案；对外给可执行修改 |
 | [`product-research`](skills/product-research/SKILL.md) | 行业摸底与竞品分析 |
 | [`product-spec`](skills/product-spec/SKILL.md) | 可开发、可验收的产品方案（PRD） |
+| [`team-git-workflow`](skills/team-git-workflow/SKILL.md) | 触碰分支、提交、推送、PR、直推或合入前，先定分支模式与安全边界 |
 
-建议顺序：worth-it-or-not →（按需）哲学 →（按需）调研 → 规格。
+建议顺序：worth-it-or-not →（按需）哲学 →（按需）调研 → 规格。触碰 Git 时使用 team-git-workflow，它不插入这条产品顺序。
 
 ## 安装
 
