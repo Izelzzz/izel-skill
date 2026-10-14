@@ -3,18 +3,18 @@
 面向 Agent 的可执行产品管理 skills。  
 Executable product-management skills for AI agents.
 
-本仓库将产品设计原则、设计哲学、调研与方案规范写成可执行流程，供 Agent 按步骤判断与交付。写法遵循 Anthropic skill-creator 惯例：description 承担触发与「何时用」，正文用祈使句给出可跟步骤与固定输出骨架。
+本仓库将「值不值得做」审查、设计哲学、调研与方案规范写成可执行流程，供 Agent 按步骤判断与交付。写法遵循 Anthropic skill-creator 惯例：description 承担触发与「何时用」，正文用祈使句给出可跟步骤与固定输出骨架。
 
 ## Skills
 
 | Skill | 用途 |
 |-------|------|
-| [`product-design-principles`](skills/product-design-principles/SKILL.md) | 提出或批准方案前判定能不能做；缺口转成对用户的追问 |
+| [`worth-it-or-not`](skills/worth-it-or-not/SKILL.md) | 先读项目事实，再判定值不值得做；缺口用 ≤3 题追问补齐 |
 | [`product-design-philosophy`](skills/product-design-philosophy/SKILL.md) | 方向确定后打磨体验与文案；对外给可执行修改 |
 | [`product-research`](skills/product-research/SKILL.md) | 行业摸底与竞品分析 |
 | [`product-spec`](skills/product-spec/SKILL.md) | 可开发、可验收的产品方案（PRD） |
 
-建议顺序：原则 →（按需）哲学 →（按需）调研 → 规格。
+建议顺序：worth-it-or-not →（按需）哲学 →（按需）调研 → 规格。
 
 ## 安装
 
