@@ -1,163 +1,225 @@
 ---
 name: team-git-workflow
 description: >
-  凡是 Agent 即将触碰 Git，就使用本 skill：创建、切换、命名或删除分支，撰写或拆分 commit，push、直推、force-push，开 PR、合入，以及处理冲突或可能覆盖用户本地改动的命令。即使用户没有说出「git」「分支」「提交」「push」「PR」「直推」「合入」，只要即将执行 git add、commit、push、checkout -b、switch -c、reset、clean、rebase、merge，或调用会创建 PR 的工具，就先读取本 skill 再动手。
-  当用户说「提交」「推上去」「直接推」「不要开 PR」「开个 PR」「合入」「新建分支」「删掉侧分支」「commit message」「冲突了」「force push」「reset」时使用本 skill。
-  本仓库 Izelzzz/izel-skill 的指定工作分支是 feature/global。其他仓库不要套用这条分支。用户已授权直推且不要 PR 时，禁止开 PR。未获直推授权时，不要推送共享分支，也不要默认开 PR。
+  凡是即将创建、切换、命名或删除分支，撰写或拆分 commit，push、直推或 force-push，开 PR、更新 PR 或合入，处理冲突，或执行 rebase、merge、reset、clean 等可能覆盖用户改动或改写共享历史的操作，就使用本 skill。
+  即使用户没有说出「git」「分支」「提交」「push」「PR」「冲突」「直推」，只要即将执行 git add、commit、push、checkout、switch、reset、clean、rebase、merge，或调用会创建 PR 的工具，也要先读取本 skill 再动手。
+  当用户说「提交」「推上去」「直接推」「不要开 PR」「开个 PR」「合入」「新建分支」「删分支」「commit message」「冲突了」「force push」「reset」时使用本 skill。
 ---
 
 # 团队 Git 工作流
 
-Git 写操作先走完标准流程，再改分支、提交、推送或 PR。默认留在该仓库的指定工作分支上。运行环境若默认「新建侧分支并开 PR」，仍以本文件的优先级为准。
+在团队仓库里用一致、可审计、可回退的方式操作 Git。名字写对不等于改动正确：执行前后都要核对仓库的实际状态和 diff。
 
-## 触发条件
+## 决策流程
 
-出现下列任一情况，先读完本文件，再执行写操作：
+ALWAYS 在任何会修改 Git 状态的命令之前，按顺序做完下列五步。不要跳步。依据不足，或继续会削弱必做检查时，停下来询问。
 
-- 即将执行 `git add`、`commit`、`push`、`checkout -b`、`switch -c`、`reset`、`clean`、`rebase`、`merge`，或调用会创建 PR 的工具。
-- 用户正在要求提交、推送、直推、开 PR、合入、新建或删除分支、修改提交说明、处理冲突、force-push 或 reset。
-- 工作区里已有用户未提交的改动，而本次任务要写同一路径。
+`git status`、`git log`、`git diff`、`git show`、`git rev-parse` 可以直接做。查询结果一旦导向提交、推送、开 PR、切换分支或改写历史，回到第 1 步。
 
-`git status`、`git log`、`git diff`、`git show` 可以直接做。查询结果一旦导向 commit、push、开 PR 或改写历史，回到本文件再继续。
+1. **预检。** 执行第 3 节。不要假设工作区是干净的。
+2. **定优先级。** 按第 2 节从高到低选用规则。先指出互相冲突的规则，再遵守更高的一条。
+3. **归类并读取。** 按下表 Read 对应参考。未读不要做该类写操作。可以同时读多份。路径相对于本 skill 目录。
 
-## 何时读取参考
+   | 即将执行 | 先读 |
+   |----------|------|
+   | 创建、切换、命名或删除分支 | `references/branch-rules.md` |
+   | 暂存或提交 | `references/commit-rules.md` |
+   | 推送 | 第 6 节，以及 `references/safety-rules.md` 的推送部分 |
+   | 创建、更新、合入或关闭 PR | `references/pr-rules.md` |
+   | `reset --hard`、`clean -fd`、force-push、改写共享历史、丢弃用户改动 | `references/safety-rules.md` |
+   | 冲突或命令失败 | `references/safety-rules.md` |
+   | 交付方式含糊，或命中下方本仓库特例 | `references/workflow-examples.md` |
 
-标准流程判定动作之后、执行该动作之前，Read 对应文件。未读不要做该类写操作。
+4. **做最小的那一步。** 只暂存本次任务的文件或 hunk，只推送预定分支。不要为了把工作区清干净而执行破坏性命令。
+5. **核对后再报告。** 用实际命令结果按第 10 节报告。失败就报告失败，不要写成成功。
 
-路径相对本 skill 目录下的 `references/`。在本仓库中，目录为 `skills/team-git-workflow/references/`。
+## 1. 目的
 
-| 即将执行 | 先读 |
-|----------|------|
-| 认定工作分支，或创建、切换、命名、删除分支 | `skills/team-git-workflow/references/branch-rules.md` |
-| 拆分提交、写提交说明、做提交前检查 | `skills/team-git-workflow/references/commit-rules.md` |
-| 判断是否开 PR，或写 PR 标题与正文 | `skills/team-git-workflow/references/pr-rules.md` |
-| force-push、`reset --hard`、`clean -fd`、冲突、可能覆盖用户改动 | `skills/team-git-workflow/references/safety-rules.md` |
-| 直推、PR、侧分支难以归类，或用户指令互相冲突 | `skills/team-git-workflow/references/workflow-examples.md` |
+本 skill 约束：
 
-可以同时读多份。只做只读查询时，不必读完全部参考。
+- 分支的命名与生命周期。
+- 提交说明的格式与提交粒度。
+- PR 的标题与正文。
+- 操作前检查与操作后核对。
+- 对用户改动和共享 Git 历史的保护。
+- 出错时如何处理和报告。
 
-## 规则优先级
+细节在 `references/`。参考文件缺失时，按本文件和该仓库自己的说明执行，不要假定缺失的规则或脚本存在。
 
-多条规则同时适用时，采用序号更小的一条。
+## 2. 规则优先级
 
-1. **安全。** 会丢弃用户改动，或改写共享分支已发布历史的操作，须有用户对本轮、本分支、本操作的明确同意。先读 `skills/team-git-workflow/references/safety-rules.md`。
-2. **本轮点名。** 用户点名的分支、点名的「直推到该分支且不要开 PR」、点名的「开 PR / 评审 / 合入受保护分支」，高于仓库习惯与工具默认。
-3. **指定工作分支。** 未点名其他分支时，留在仓库的指定工作分支。远程 URL 或仓库名包含 `Izelzzz/izel-skill` 时，指定工作分支是 `feature/global`。
-4. **默认交付方式。** 不开 PR，不新建侧分支。未获直推授权时，不向共享分支推送。
-5. **提交。** 一个任务主题一次提交；说明写明改了什么。
-6. **脚本。** `scripts/` 是日后接入本地 hook 或 CI 的骨架。脚本未接入时，第 1–5 条仍然有效。
+按下面的顺序适用。序号更小的一条优先。
 
-## 标准流程
+1. 平台的安全限制与权限边界。
+2. 用户对本轮任务的明确指令。该指令不得违反第 1 级。
+3. 仓库自己的、以及团队要求的说明、模板和钩子。
+4. 本技能的一般 Git 工作流。
+5. 本技能里的示例与默认值。
 
-ALWAYS 按下列五步决策，再执行 Git 写操作。依据不足就停下来询问。不要跳步。
+规则冲突时：先点明冲突，遵守更高的一条；事关数据丢失或共享历史、又不能安全地自行裁决时，询问用户。不要悄悄放宽必做检查。
 
-### 1. 归类意图
+仓库可以规定不同的分支前缀、提交约定、默认分支、PR 模板和校验命令。先查看并遵守那些约定，不要机械套用本技能的默认值。
 
-将本次操作归入一类：
+**本仓库特例（仅 Izelzzz/izel-skill）。** 远程 URL 或仓库名是该仓库时，下列三条属于第 3 级：高于第 4、5 级的一般流程，低于第 1、2 级。其他仓库不要套用，也不要把它们理解成「永远直推、任务结束就删分支」。
 
-- **只读：** `status`、`log`、`diff`、`show`。可以直接做。
-- **留存改动：** 需要 commit，可能还要 push。
-- **分支：** 创建、切换、命名或删除。
-- **交付：** 推送、直推、开 PR 或合入。
-- **危险：** force-push、`reset --hard`、`clean -fd`，以及任何会覆盖用户未提交改动的命令。
-- **冲突：** 工作区、暂存区或将要写入的路径上已有用户改动，或与将要应用的差异冲突。
+- 指定工作分支是 `feature/global`。用户没有点名别的分支时，在这条分支上完成本次任务。不要为了迁就默认的 `feat/` 前缀而给它改名。
+- 用户授权把改动推到该分支、并且不要 PR 时：在该分支提交并推送。禁止创建或更新 PR，禁止调用会打开 PR 的工具。
+- 已授权的清理仅限：本次任务如果用了未经授权的 `cursor/*` 侧分支，结束前删除这些残留。删除前核对分支身份，以及上面是否还有未合并的有价值提交。不要删除其他分支。
 
-危险与冲突先读 `skills/team-git-workflow/references/safety-rules.md`，再决定能否继续。其余进入第 2 步。
+未出现上述直推授权时，可以在 `feature/global` 上提交，但不要推送，也不要改成开 PR。完整走法见 `references/workflow-examples.md` 的「本仓库特例」。
 
-### 2. 选定分支模式
+## 3. 强制预检
 
-先读 `skills/team-git-workflow/references/branch-rules.md`。
+修改 Git 状态之前：
 
-- **工作分支模式（默认）。** 用户没有要求新分支，没有要求 PR，也没有说不要碰当前线。留在指定工作分支上提交。本仓库是 `feature/global`。不要创建 `cursor/…` 或其他侧分支。
-- **侧分支模式。** 仅当用户明确要求新分支、要求开 PR，或明确说不要碰当前线。分支名符合 `branch-rules.md`。任务结束或合入之后，删除该侧分支的本地与远程引用。
+1. 确认仓库根目录。
+2. 阅读适用的 `AGENTS.md`、`CONTRIBUTING.md`，以及其他相关的仓库说明。
+3. 查看 `git status --short --branch`、`git branch --show-current`、`git diff`、`git diff --cached`。
+4. 判断已有改动属于本次任务，还是任务开始前就已经在工作区里。
+5. 在建分支、合并、变基或创建 PR 之前，确认基线分支和目标分支。
+6. 找出该仓库自己的校验命令和 PR 模板。
 
-已经站在未经请求的 `cursor/…` 侧分支上时，先读 `skills/team-git-workflow/references/workflow-examples.md` 的清理示例，把提交移回指定工作分支并删除该侧分支。
+已有用户改动时：保留它们。没有明确授权，不要丢弃、覆盖、reset，也不要把它们放进本次提交。只暂存本次任务的文件或 hunk。无法安全分开时，停下来询问。
 
-### 3. 确定提交粒度
+## 4. 分支规则
 
-先读 `skills/team-git-workflow/references/commit-rules.md`。
+先遵守仓库自己的分支约定。仓库没有约定时，使用 `<type>/<short-description>`。
 
-- 一个逻辑主题一次提交。
-- 两套互不相关的 skill，或功能改动夹带无关重构时，拆成多次提交。
-- 用户未允许时，不要把顺手清理混进功能提交。
-- 提交说明使用祈使句或中文，写明改了什么。拒绝空说明，以及只有 `update` / `fix` 的说明。
+默认类型只有：`feat/`、`fix/`、`refactor/`、`docs/`、`test/`、`chore/`、`hotfix/`。
 
-### 4. 决定推送或 PR
+名称使用小写英文和连字符，短而具体，描述这次任务。不要有空格、标点或个人敏感信息。工单号只有仓库要求时才放进名字。
 
-三条路径只取一条。
+创建和切换时：不要假定当前分支可以改；不要从猜的基线拉分支；只有同一任务且不会混入无关改动时才复用已有分支；切换会覆盖或丢失本地改动时不要切换。没有明确授权、且仓库政策不允许时，不要把任务提交直接放到受保护或共享的基线分支上。
 
-- **直推。** 用户已经授权「推送到分支 X，且不要开 PR」时：在分支 X 上 commit 并 push。禁止打开 PR，禁止调用会创建 PR 的工具。授权要同时具备：点名了分支 X，要求把提交推上 X，并要求不要开 PR（或把直接推送写成这次的交付方式）。X 为 `main` 或 `master` 时，仅当用户点名了 `main` 或 `master` 才可以直推。
-- **只提交。** 用户要求留存改动，但没有直推授权：可以在第 2 步选定的分支上 commit，不 push。不要改成开 PR。运行环境若必须推送才能交付，停下来询问。
-- **PR。** 仅当用户要求评审、要求合入受保护分支，或明确说开 PR。先读 `skills/team-git-workflow/references/pr-rules.md`，按其中的标题与正文模板创建。此路径使用侧分支。
+不要在任务完成后自动删除分支。只有用户明确要求，或已经成立的授权清理政策适用时才删除。删除前核对身份，以及是否还有未合并的有价值工作。
 
-直推与开 PR 不能同时成立。用户两句都说了时，读 `skills/team-git-workflow/references/workflow-examples.md`。仍无法归类则询问，不要两样都做。
+命名示例、切换条件和删除前检查见 `references/branch-rules.md`。
 
-「推上去」但没有点名分支，也没有说不要开 PR：不算直推授权。询问目标分支与是否开 PR。
+## 5. 提交规则
 
-### 5. 清理
+先遵守仓库的提交约定。没有约定时，使用 `<type>(<scope>): <imperative summary>`。`scope` 可以省略。
 
-- 侧分支模式：合入完成或用户确认该分支已无用后，删除本地与远程侧分支。
-- 工作分支模式：确认没有留下 `cursor/…` 分支。有则删除本地与远程引用。
-- 清理时使用普通删除。不要 force-push 来完成清理。
-- 删除目标只能是本次任务的侧分支。指定工作分支、`main`、`master` 不在删除范围内。
+类型只有：`feat`、`fix`、`refactor`、`docs`、`test`、`chore`、`perf`、`build`、`ci`。
 
-## 禁止事项
+摘要用祈使语气，写明改了什么。没有跑过的测试不要写成通过。拒绝笼统的 `update`、`fix bug`、`changes`。不要编造工单号。
 
-- 未获「直推到分支 X 且不要开 PR」的授权时，向共享分支推送。
-- 直推授权仍然有效时打开 PR。
-- 用户未要求新分支、PR 或不碰当前线时创建侧分支。
-- 留下 `cursor/…` 分支。
-- 用户未点名 `main` 或 `master` 时向这两条分支直推。
-- 未经用户对本分支的明确同意，对共享分支或工作分支 force-push。
-- 未经用户明确同意，执行会丢弃用户改动的 `git reset --hard` 或 `git clean -fd`。
-- 与用户本地改动冲突时覆盖文件。
-- 使用空的提交说明，或只有 `update`、`fix` 及同等空洞字样。
-- 把互不相关的改动放进同一次提交。
+一次提交只含一个连贯的逻辑改动。无关的修复、格式化和功能要拆开。该带的测试和文档一起带上。不要提交密钥、凭据、环境文件、生成垃圾，或与任务无关的用户改动。没有授权时不要改写共享历史。
 
-## 异常处理
+提交前：看 status，检查 diff，只暂存本次任务，再看 `git diff --cached`，排除密钥、无关改动、误删和生成文件，跑仓库要求的检查，确认自己理解这次提交后再提交。工作区里可能有无关改动或用户原有改动时，不要无差别 `git add .` 或 `git add -A`。
 
-- **指令含糊。** 先 Read `skills/team-git-workflow/references/workflow-examples.md`。仍不能归入唯一步骤时，停下来询问。不要选「开 PR」作为默认解。
-- **与用户本地改动冲突。** 停止。列出冲突路径，询问保留哪一侧。不要覆盖，不要用 `--ours` / `--theirs` 自行取舍。
-- **当前已在错误的侧分支上。** 把属于本次任务的提交移回指定工作分支，删除该侧分支的本地与远程引用。不要为了搬运提交而开 PR。
-- **推送被拒绝（非快进）。** 停止并报告原因。不要 force-push，除非用户对本分支的 force-push 给出明确同意。
-- **脚本不可用。** 脚本缺失、没有执行权限，或尚未接入 hook / CI 时，继续按本文件与 `references/` 执行。
+格式、粒度例和脚本见 `references/commit-rules.md`。
 
-## 常见借口
+## 6. 推送规则
 
-| 借口 | 处理 |
-|------|------|
-| 工具默认要开 PR，开了用户才看得见 | 直推授权下禁止开 PR。未授权时也不要开 PR 来代替询问。 |
-| 侧分支更安全，做完再合回 | 用户未要求新分支、PR 或不碰当前线时，留在指定工作分支。 |
-| 提交说明以后再改成具体的 | 这一次提交的说明就要写明改了什么。 |
-| 顺手把格式和无关重命名一起提交 | 与本次主题无关的改动另一次提交。用户未允许时不要夹带。 |
-| 冲突了，先用当前版本覆盖 | 停止并询问。 |
-| 脚本没接入，规则可以放宽 | 脚本未接入时，仍然执行 Markdown 规则。 |
-| `cursor/` 分支用完再删，先留着 | 侧分支用完即删。用户没要求时不要创建。 |
+推送前确认：分支、远程、目的地、跟踪关系、将要送出的提交和 diff，以及覆盖或触发部署的风险。
 
-## 停手信号
+只推送预定的那条分支。不要对共享分支 force-push。不要用 `--force` 对付被拒绝的推送。不要绕过分支保护。本地与远程分叉时：先查看两边，按仓库政策处理；改写共享历史之前要得到授权。
 
-出现下列想法时，停止当前 Git 写操作，回到标准流程第 1 步。
+`--force-with-lease` 仍然改写已发布历史。只有确实必要、仓库政策允许、并且用户明确授权这三项同时成立时才使用。
 
-- 用户没有要求评审或开 PR，却准备开一个 PR。
-- 准备创建 `cursor/…` 分支，或准备把已有的 `cursor/…` 分支留在远程。
-- 准备把提交说明写成 `update` 或 `fix`。
-- 工作区有用户改动，准备覆盖或 `reset --hard`。
-- 普通推送被拒绝，准备对工作分支 force-push。
+直推指：用户授权把提交推到点名的分支，并且这次交付不使用 PR。直推不是 force-push，也不自动授权删除分支。推送被拒绝时的处理见 `references/safety-rules.md`。
 
-## 脚本
+## 7. 拉取请求规则
 
-`scripts/` 三个文件供以后接入本地 hook 或 CI，是可执行骨架，不要求已经接入。Agent 遵守本文件与 `references/`，不依赖脚本是否已经挂上。脚本通过只说明机械检查过了，不代替阅读参考文件。
+先遵守仓库的标题约定。没有约定时，标题使用 `<type>: <short description>`，描述实际改动。类型与第 5 节相同。
+
+先遵守仓库的 PR 模板。没有模板时，正文使用这些节：
+
+- **摘要：** 改了什么？为什么需要？
+- **变更：** 主要实现变化。
+- **验证：** 跑过哪些测试或检查、结果是什么、什么没测。
+- **风险与说明：** 限制、兼容性、发布注意。没有则省略。
+- **相关问题：** 只写已核实的工单。没有则省略。不要编造。
+
+正文面向评审，简短、如实。不要只是把提交说明重抄一遍。没跑过的测试不要写成通过。假设要标出来。不适用的节省略，不要写 N/A，除非模板强制保留该标题。
+
+创建 PR 前核对：源分支与目标分支、diff 只有预定改动、测试已跑或已写明未测项、没有密钥、标题和正文与 diff 一致、标签评审人和关联工单正确、没有重复的 PR。
+
+创建、更新、合入、关闭 PR 都需要授权，并且要符合仓库政策。没有授权不要自动合入。创建之后要核实 PR 确实存在，报告真实 URL；失败就报告失败。
+
+模板与脚本见 `references/pr-rules.md`。
+
+## 8. 危险操作与用户数据保护
+
+高风险操作包括：`reset --hard`；`clean -fd` 以及会删除未跟踪文件的 clean；force-push；改写共享历史；删除仍有价值的分支；丢弃用户改动；冲突时覆盖一侧；绕过钩子、权限或检查。
+
+执行前：说明影响；检查未提交的有价值工作；确认这一步确有必要；取得授权；能用可回退的做法就不用不可回退的做法。
+
+禁止：为了省事藏起、丢掉或覆盖用户改动；自动选用 `--ours` 或 `--theirs`；提交密钥；没有证据就报告成功；绕过访问控制。
+
+对会不会丢数据没有把握时，停下来询问。操作步骤见 `references/safety-rules.md`。
+
+## 9. 冲突与失败处理
+
+命令失败时：读完整错误；检查仓库当前状态；判断原因；选择破坏最小的恢复办法。不要盲目重试同一条命令。
+
+出现冲突时：同时看两侧；保留与本次任务无关的用户改动；只有意图已经清楚时才解决冲突。意图清楚，指用户已经说明保留哪一侧，或任务目标与两侧差异能够无歧义对应。猜的不算清楚。解决之后跑测试，并检查最终 diff。意图不清楚时询问。
+
+不要把失败的操作报告成成功。分类和恢复顺序见 `references/safety-rules.md`。
+
+## 10. 完成核对与报告
+
+报告前先核对真实状态：当前分支和工作区；提交哈希与说明；远程分支；PR 的 URL 和目标分支；测试的实际结果。跳过的检查和遗留问题要写明。
+
+ALWAYS 使用下面的结构。没有发生的字段整行省略。
+
+```markdown
+- 分支：
+- 变更：
+- 提交：
+- 推送或 PR：
+- 验证：
+- 未决问题：
+```
+
+每一行都写命令或工具返回的事实。不要把「准备推送」写成「已经推送」。
+
+## 11. 参考
+
+需要时再加载：
+
+- `references/branch-rules.md`
+- `references/commit-rules.md`
+- `references/pr-rules.md`
+- `references/safety-rules.md`
+- `references/workflow-examples.md`
+
+默认约定的机械检查（仓库另有约定时，以仓库约定为准，脚本不覆盖第 3 级）：
 
 | 脚本 | 作用 |
 |------|------|
-| `skills/team-git-workflow/scripts/validate-branch.sh` | 检查分支名。合法则退出码 0；命名不合法为 1；`main` / `master` 为 2。 |
-| `skills/team-git-workflow/scripts/validate-commit-msg.sh` | 拒绝空说明，以及只有 `update` / `fix` 的说明。 |
-| `skills/team-git-workflow/scripts/validate-pr.py` | 检查 PR 标题，以及正文是否包含「改了什么」「如何验证」「链接」。 |
+| `scripts/validate-branch.sh` | 默认任务分支是否为 `<type>/<desc>`。退出码 0 匹配；1 不匹配或无法确定。 |
+| `scripts/validate-commit-msg.sh` | 默认提交说明是否为 `<type>(scope): summary`，并拒绝笼统摘要。 |
+| `scripts/validate-pr.py` | PR 标题，以及正文是否含有摘要、变更、验证。 |
+
+脚本通过只说明机械格式过了，不说明 diff 是对的。脚本缺失时，按本文件和参考文件执行。
+
+## 12. 核心原则
+
+先查看，再改动。先保留，再清理。先核对，再报告。
+
+用安全、可评审、可回退的 Git 操作完成任务。快捷方式让共享历史和用户改动处于不可恢复的状态时，不要走快捷方式。
 
 ## Example
 
-**Input：** 「在 Izelzzz/izel-skill 里加上团队 Git 工作流 skill。直接推到 `feature/global`，不要开 PR。」
+**Input：** 在一个没有额外分支政策的服务仓库里修复 OAuth token 过期。基线是 `main`。用户要求开 PR 合入 `main`。工作区是干净的。
 
-**对内决策：** 意图是留存改动并直推。分支模式为工作分支 `feature/global`。一个主题一次提交。交付方式为直推，禁止开 PR。清理时确认没有 `cursor/…` 分支。执行前 Read `skills/team-git-workflow/references/branch-rules.md` 与 `skills/team-git-workflow/references/commit-rules.md`。
+**决策：**
 
-**Output：** 在 `feature/global` 上一次提交，说明写明新增了该 skill；推送到 `origin/feature/global`；不创建 PR，不保留侧分支。
+1. 预检确认仓库根、`CONTRIBUTING.md`、status 和 diff。基线是 `main`，不是猜的。
+2. 用户明确要求 PR，属于第 2 级。该仓库不是 Izelzzz/izel-skill，不使用 `feature/global`，也不在结束后删分支。
+3. 读取 `references/branch-rules.md`、`references/commit-rules.md`、`references/pr-rules.md`。
+4. 从 `main` 创建 `fix/oauth-token-refresh`。提交 `fix(auth): refresh oauth tokens before expiry`。只推送这条分支。按第 7 节写 PR。不合入。
+5. 核实 PR 的真实 URL，再按第 10 节报告。没跑的测试写成没跑。
+
+**Output：**
+
+```markdown
+- 分支：fix/oauth-token-refresh，基于 main
+- 变更：在 access token 过期前刷新 OAuth
+- 提交：<真实哈希> fix(auth): refresh oauth tokens before expiry
+- 推送或 PR：已推送 origin/fix/oauth-token-refresh；PR <真实 URL>，目标 main；未合入；未删除分支
+- 验证：<实际跑过的命令与结果；没跑则写明没跑和原因>
+```
+
+本仓库的直推与 `cursor/*` 残留清理只按 `references/workflow-examples.md` 的「本仓库特例」执行。

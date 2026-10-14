@@ -1,98 +1,100 @@
-# Commit 格式、粒度与提交前检查
+# 提交格式、粒度与提交前检查
 
-每次 `git commit` 之前阅读本文件。本文件是 `team-git-workflow` 的提交规则。入口与决策顺序在 `skills/team-git-workflow/SKILL.md`。
+每次 `git commit` 之前阅读本文件。决策顺序在 `SKILL.md`。仓库自己的提交约定优先于这里的默认格式。
 
-`scripts/validate-commit-msg.sh` 只拒绝空说明，以及整句只有 `update` / `fix` 的说明。脚本退出码为 0，只表示躲过了这份机械检查。说明是否写明改了什么，仍由本节判断。
+`scripts/validate-commit-msg.sh` 检查的是默认格式，并拒绝笼统摘要。仓库使用别的约定时，按仓库约定写，并运行仓库自己的检查。脚本退出码 0 只表示默认格式的机械检查过了，不表示这次 diff 该提交。
 
-## 粒度
+## 说明格式
 
-一个逻辑主题一次提交。一次任务只有一个主题时，做一次提交。
+仓库没有提交约定时，主题行使用：
 
-拆开的情况：
+```text
+<type>(<scope>): <imperative summary>
+```
 
-- 同一任务改了两套互不相关的 skill。
-- 功能改动之外还有与该功能无关的文档、重命名或重构。
-- 用户把两件独立的事放在同一句话里，两件事可以分开评审、分开回退。
+`scope` 可以省略，写成 `<type>: <imperative summary>`。可选的 `!` 放在冒号前，表示破坏性变更，不能代替摘要。
 
-用户明确允许把清理和功能放在一起时，可以同一次提交。提交说明里写上功能改了什么，也写上清理了什么。
+类型只有：
 
-用户未允许时，不要夹带顺手清理：不要把无关格式化、无关重命名、无关依赖锁定文件放进功能提交。那些改动要么另一次提交并在说明里写明主题，要么不提交。
+| 类型 | 用于 |
+|------|------|
+| `feat` | 新能力 |
+| `fix` | 缺陷修复 |
+| `refactor` | 不改变外部行为的结构调整 |
+| `docs` | 文档 |
+| `test` | 测试 |
+| `chore` | 杂项维护 |
+| `perf` | 性能 |
+| `build` | 构建系统或依赖打包 |
+| `ci` | 持续集成 |
 
-不要 `git commit --amend` 用户已有的提交，除非用户在本轮明确要求修改那一次提交。不要用 `--no-verify` 跳过检查，除非用户在本轮明确要求跳过。
+`hotfix` 可以作为分支类型，不是提交类型。生产修复的提交仍用 `fix`。
 
-## 提交说明
+摘要用祈使语气，点明改动对象和做了什么。中文摘要同样要让读者不看 diff 就知道改了哪一块。英文不要用过去式凑主题行。
 
-主题行使用祈使句，或使用中文。两种都可以。主题行必须让读者看出改了什么：改动的对象，以及做了哪一种变更。
+正文可选。有正文时，用空行与主题行分开。主题行本身仍然要能独立说明这次提交。
 
-主题行可以带类型前缀，也可以不带。前缀不是必须。若使用，形式为 `type: 说明` 或 `type(scope): 说明`。`type` 取 `feat`、`fix`、`chore`、`docs`、`refactor`、`test`、`style`、`perf`、`build`、`ci`、`revert` 之一。`scope` 只含小写字母、数字、`_`、`.`、`/`、`-`。真正受检的是冒号后面的说明。
-
-正文可选。有正文时，用空行与主题行分开，补充主题行没写完的范围。主题行本身仍然要能独立说明改了什么。
-
-### 必须拒绝的说明
-
-下列主题行不要提交：
+### 必须拒绝的写法
 
 - 空说明、只有空白、只有注释行。
-- 整句（或类型前缀之后）只有空洞词：`update`、`updates`、`updated`、`updating`、`fix`、`fixed`、`fixes`、`fixing`、`fixup`。
-- 整句只是这些词的堆叠或明显空洞短语，例如 `fix bug`、`minor fix`、`quick fix`、`update readme`、`update code`、`fix typo`、`fix: update`。
-
-大小写与句末的 `.` `!` `。` `！` 不影响判定。`Update`、`Fix.` 与 `fix` 同样拒绝。
-
-说明里出现 `fix` 或 `update` 这个词，并不自动拒绝。`fix(commit): reject empty subjects` 写明了拒绝的对象，可以提交。`修复登录死循环` 写明了对象和现象，可以提交。
-
-### 脚本会拒绝的短语
-
-`validate-commit-msg.sh` 把主题行规范化之后（去掉可选类型前缀、去掉句末标点、压缩空白、忽略大小写），整句落在下表则退出码 1。
-
-英文词全部属于空洞词（冠词与连词 `a` `an` `the` `of` `to` `for` `and` `or` `in` `on` 不算出内容）时，同样退出码 1。因此 `fix the bug` 会被拒绝。含有汉字且汉字本身写出了改动时，不因旁边的 `fix` / `update` 被拒绝。
-
-| 类别 | 短语 |
-|------|------|
-| 单词 | `update` `updates` `updated` `updating` `fix` `fixed` `fixes` `fixing` `fixup` |
-| 堆叠 | `fix update` `update fix` |
-| 空洞短语 | `minor fix` `small fix` `quick fix` `bug fix` `fix bug` `fix bugs` `fix code` `fix issue` `fix issues` `fix typo` `typo fix` `various fixes` `update code` `update files` `update docs` `update readme` `minor update` `small update` `quick update` `minor changes` `small changes` |
-
-脚本不要求英文最少词数。`Add skill` 这种短句能通过脚本，但仍可能没写明是哪一项。Agent 看到对象或结果不清楚时，改写主题行再提交，不要因为脚本退出码为 0 就停。
-
-### 写明改了什么
-
-合格的主题行同时点出对象和变更。读者不看 diff 也能知道这次提交动了哪一块。
+- 缺少类型，或类型不在上表中。
+- 摘要笼统，例如整句只有 `update`、`fix bug`、`changes`，或同等的「更新」「修复」「改动」。
+- 把没有运行的测试写成已经通过。验证情况写在 PR 或完成报告里，并且与实际命令结果一致。
+- 编造工单号、issue 链接或变更编号。脚本不会替你核实编号；写上编号之前，你必须已经在仓库或工单系统里看到它。
 
 | 主题行 | 判定 |
 |--------|------|
-| `Add team-git-workflow skill` | 合格。对象是该 skill，变更是新增。 |
-| `新增团队 Git 工作流 skill` | 合格。 |
-| `fix(commit): reject empty subjects` | 合格。对象是提交说明检查，变更是拒绝空主题。 |
-| `补充分支命名校验` | 合格。 |
-| `update` | 拒绝。 |
-| `Fix.` | 拒绝。 |
-| `fix: update` | 拒绝。 |
-| `update readme` | 拒绝。没有写明 README 哪一条变成了什么。 |
-| `Add skill` | 脚本可能通过。对象不清，改写成带 skill 名的说明再提交。 |
+| `feat(auth): add review summary endpoint` | 符合默认格式 |
+| `fix: refresh oauth tokens before expiry` | 符合。scope 省略 |
+| `docs(team-git-workflow): 重写团队 Git 工作流` | 符合。摘要写明了对象 |
+| `fix(auth)!: rotate signing keys` | 符合。`!` 不代替摘要 |
+| `update` | 拒绝。没有类型，摘要笼统 |
+| `fix bug` | 拒绝 |
+| `feat: update` | 拒绝。摘要笼统 |
+| `feat: changes` | 拒绝 |
+| `Add team git workflow skill` | 拒绝。缺少类型 |
+| `hotfix: patch login` | 拒绝。`hotfix` 不是提交类型 |
 
-## 提交前检查
+## 粒度
 
-每次 `git commit` 之前按顺序做完：
+一次提交一个连贯的逻辑改动。读者应能单独 revert 这一次，而不拆散无关的工作。
 
-1. `git status`。确认当前分支是标准流程第 2 步选定的那一条。
-2. `git diff` 与 `git diff --cached`。确认即将提交的文件都属于这一个主题。
-3. 把与主题无关、且用户未允许夹带的修改移出本次提交。
-4. `git log -8 --oneline`。仓库近期说明是英文祈使句。本次仍可用英文祈使句或中文，主题行必须写明改了什么。
-5. 按上一节写说明。空说明与只有 `update` / `fix` 的说明不要提交。
-6. 运行 `skills/team-git-workflow/scripts/validate-commit-msg.sh`，参数为说明文件或 `-m`。退出码非 0 则改写说明。脚本缺失时，仍按第 5 步拒绝空洞说明。
+拆开这些情况：
 
-检查完再 `git add` 本次主题的文件并提交。不要把整个工作区无差别 `git add -A`，除非 `git status` 里的每一项都属于这一个主题。
+- 无关的缺陷修复、格式化和功能改动落在同一次任务里。
+- 两套可以分开评审、分开回退的改动。
 
-## 校验脚本
+与这次改动对应的测试和文档，放进同一次提交。不要为了「纯代码」把测试留到下一次。
+
+不要提交：
+
+- 密钥、凭据、令牌、私钥。
+- 环境文件，以及含有本地机密的配置。
+- 构建产物和其他生成垃圾。
+- 与本次任务无关的用户改动。
+
+没有授权时，不要改写已经共享的历史。这包括对已推送提交执行 `git commit --amend`、rebase 后强推，以及 reset 到会丢掉已发布提交的位置。即使用户要求修改最后一次提交，也要先确认那次提交还没有推到共享分支；已经推送时，按 `safety-rules.md` 取得对改写历史的授权。
+
+不要使用 `--no-verify` 跳过钩子，除非用户在本轮明确要求跳过，并且这样做不违反平台的安全限制。
+
+## 提交前
+
+按这个顺序做完再提交：
+
+1. `git status --short --branch`。确认当前分支就是本次允许写入的分支。
+2. `git diff` 与 `git diff --cached`。确认即将进入提交的内容属于这一个逻辑改动。
+3. 只暂存本次任务的文件或 hunk。可能存在无关改动或用户原有改动时，不要 `git add .`，不要 `git add -A`。
+4. 再次查看 `git diff --cached`。排除密钥、无关文件、意外删除和生成垃圾。
+5. 运行仓库要求的测试或检查。没跑的项目留到完成报告里说明，不要写成通过。
+6. 按上一节写说明。使用默认格式时，运行 `scripts/validate-commit-msg.sh`。退出码非 0 就改写说明，不要带着失败提交。
+7. 自己能向别人讲清这次提交改了什么之后，再执行 `git commit`。
+
+消息文件按 commit-msg 钩子的习惯处理：忽略空行和以 `#` 开头的注释，用第一条有效行作为主题行。
 
 ```bash
-skills/team-git-workflow/scripts/validate-commit-msg.sh <消息文件>
-skills/team-git-workflow/scripts/validate-commit-msg.sh -m "Add team-git-workflow skill"
-printf '%s\n' "新增团队 Git 工作流 skill" | skills/team-git-workflow/scripts/validate-commit-msg.sh
+scripts/validate-commit-msg.sh <消息文件>
+scripts/validate-commit-msg.sh -m "fix: refresh oauth tokens before expiry"
+printf '%s\n' "docs(team-git-workflow): 重写团队 Git 工作流" | scripts/validate-commit-msg.sh
 ```
 
-消息文件按 Git `commit-msg` hook 的习惯处理：忽略空行与以 `#` 开头的注释行，取第一条有效行作为主题行。主题行之后的正文不参与空洞词检查。
-
 退出码：`0` 通过机械检查；`1` 拒绝。
-
-脚本未接入本地 hook 或 CI 时，第 5 步仍然执行。接入之后，hook 调用本脚本，失败则这次提交不成立。

@@ -1,15 +1,18 @@
 #!/usr/bin/env python3
-"""检查 PR 标题与正文必填段。
+"""Validate a pull request title and the default body sections.
 
-用法:
-  validate-pr.py --title "标题" --body-file body.md
+校验 PR 标题，以及默认正文的必填节。
+
+Usage:
+  validate-pr.py --title "fix: refresh tokens" --body-file body.md
   validate-pr.py --title-file title.txt --body-file body.md
-  validate-pr.py --title "标题" --body "## 改了什么\\n..."
+  validate-pr.py --title "feat: add summary" --body "## 摘要\\n..."
 
-标题与 validate-commit-msg.sh 使用同一套空洞说明检查。
-正文必须包含三段二级标题，且各段有内容。见 references/pr-rules.md。
-脚本未接入 CI 时，Agent 仍要按该模板写 PR。直推任务不要创建 PR。
-退出码: 0 通过；1 有缺项。
+Required sections / 必填: 摘要 Summary, 变更 Changes, 验证 Validation.
+Optional sections are omitted when they do not apply. If present, they need
+real content. 可选节（风险与说明、相关问题）不适用时省略；写了就不能是占位符。
+
+Exit: 0 accepted; 1 rejected.
 """
 
 from __future__ import annotations
@@ -20,11 +23,16 @@ import subprocess
 import sys
 from pathlib import Path
 
-GROUPS: tuple[tuple[str, tuple[str, ...]], ...] = (
-    ("改了什么", ("改了什么", "what changed", "summary")),
-    ("如何验证", ("如何验证", "how to verify", "test plan")),
-    ("链接", ("链接", "links", "references")),
+REQUIRED: tuple[tuple[str, tuple[str, ...]], ...] = (
+    ("摘要", ("摘要", "summary")),
+    ("变更", ("变更", "changes")),
+    ("验证", ("验证", "validation")),
 )
+OPTIONAL: tuple[tuple[str, tuple[str, ...]], ...] = (
+    ("风险与说明", ("风险与说明", "risks and notes", "risks")),
+    ("相关问题", ("相关问题", "related issues")),
+)
+GROUPS = REQUIRED + OPTIONAL
 
 PLACEHOLDERS = {
     "todo",
@@ -33,35 +41,42 @@ PLACEHOLDERS = {
     "…",
     "n/a",
     "na",
+    "none",
+    "无",
+    "无内容",
+    "暂无",
     "待定",
     "待补充",
-    "无内容",
     "xxx",
     "fixme",
-    "更新代码",
-    "测试一下",
+    "update",
+    "fix",
+    "changes",
+    "更新",
+    "修复",
+    "改动",
 }
-
-LINK_EXPLICIT_EMPTY = {"无", "none", "无相关链接", "n/a", "暂无"}
 
 
 def read_text(value: str | None, file_path: str | None, label: str, flags: str) -> str:
     if value is not None and file_path is not None:
-        raise SystemExit(f"validate-pr: {label}只能从一处提供（{flags}）。")
+        raise SystemExit(
+            f"validate-pr: {label}只能从一个来源提供（{flags}）。 (provide {label} once)"
+        )
     if file_path is not None:
         path = Path(file_path)
         if not path.is_file():
-            raise SystemExit(f"validate-pr: 找不到{label}文件: {file_path}")
+            raise SystemExit(f"validate-pr: 找不到{label}文件: {file_path} (file not found)")
         return path.read_text(encoding="utf-8")
     if value is not None:
         return value
-    raise SystemExit(f"validate-pr: 缺少{label}。使用 {flags}。")
+    raise SystemExit(f"validate-pr: 缺少{label}。使用 {flags}。 (missing {label})")
 
 
 def title_errors(title: str) -> list[str]:
     script = Path(__file__).resolve().parent / "validate-commit-msg.sh"
     if not script.is_file():
-        return ["validate-pr: 找不到 validate-commit-msg.sh，无法检查标题。"]
+        return ["validate-pr: 找不到 validate-commit-msg.sh，无法检查标题。 (missing commit checker)"]
     completed = subprocess.run(
         [str(script), "-m", title],
         check=False,
@@ -73,7 +88,7 @@ def title_errors(title: str) -> list[str]:
     detail = (completed.stderr or completed.stdout).strip()
     detail = detail.removeprefix("validate-commit-msg:").strip()
     if not detail:
-        detail = "标题未通过空洞说明检查。"
+        detail = "标题未通过默认格式检查。 (title rejected)"
     return [f"validate-pr: 标题不合格。{detail}"]
 
 
@@ -83,8 +98,10 @@ def normalize_heading(text: str) -> str:
     return re.sub(r"\s+", " ", heading).strip()
 
 
-def parse_sections(body: str) -> dict[str, str]:
+def parse_sections(body: str) -> tuple[dict[str, str], list[str]]:
     found: dict[str, list[str]] = {name: [] for name, _aliases in GROUPS}
+    seen: dict[str, int] = {name: 0 for name, _aliases in GROUPS}
+    errors: list[str] = []
     current: str | None = None
     for line in body.splitlines():
         match = re.match(r"^##\s+(.+?)\s*$", line)
@@ -93,33 +110,50 @@ def parse_sections(body: str) -> dict[str, str]:
             current = None
             for name, aliases in GROUPS:
                 if normalized in aliases:
+                    seen[name] += 1
+                    if seen[name] > 1:
+                        errors.append(
+                            f"validate-pr: 「{name}」重复。保留一节。 (duplicate section)"
+                        )
                     current = name
                     break
             continue
         if current is not None:
             found[current].append(line)
-    return {name: "\n".join(lines).strip() for name, lines in found.items()}
+    sections = {name: "\n".join(lines).strip() for name, lines in found.items()}
+    return sections, errors
+
+
+def is_placeholder(content: str) -> bool:
+    flattened = re.sub(r"\s+", " ", content).strip()
+    flattened = re.sub(r"^[-*]\s*", "", flattened)
+    token = flattened.lower().strip(" .。")
+    return token in PLACEHOLDERS
 
 
 def section_errors(sections: dict[str, str]) -> list[str]:
     errors: list[str] = []
-    for name, _aliases in GROUPS:
+    for name, _aliases in REQUIRED:
+        content = sections.get(name, "").strip()
+        if not content or is_placeholder(content):
+            errors.append(
+                f"validate-pr: 正文缺少「{name}」，或该节只有占位内容。"
+                " (missing or placeholder required section)"
+            )
+    for name, _aliases in OPTIONAL:
         content = sections.get(name, "").strip()
         if not content:
-            errors.append(f"validate-pr: 正文缺少「{name}」，或该段为空。")
             continue
-        flattened = re.sub(r"\s+", " ", content).strip()
-        flattened = re.sub(r"^[-*]\s*", "", flattened)
-        token = flattened.lower().strip(" .。")
-        if name == "链接" and token in LINK_EXPLICIT_EMPTY:
-            continue
-        if token in PLACEHOLDERS or token in {"update", "fix", "fixed", "fixes"}:
-            errors.append(f"validate-pr: 「{name}」只有占位或空洞字样。写入该段要求的内容。")
+        if is_placeholder(content):
+            errors.append(
+                f"validate-pr: 「{name}」只有占位内容。没有实质内容时省略该节，不要写 N/A。"
+                " (omit empty optional section)"
+            )
     return errors
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="检查 PR 标题与正文必填段")
+    parser = argparse.ArgumentParser(description="检查 PR 标题与默认正文必填节")
     parser.add_argument("--title", help="PR 标题")
     parser.add_argument("--title-file", help="含有 PR 标题的文件")
     parser.add_argument("--body", help="PR 正文")
@@ -131,12 +165,15 @@ def main() -> int:
         body = read_text(args.body, args.body_file, "正文", "--body 或 --body-file")
     except SystemExit as exc:
         if exc.code not in (0, None):
-            print(exc.code if isinstance(exc.code, str) else "validate-pr: 参数不完整。", file=sys.stderr)
+            message = exc.code if isinstance(exc.code, str) else "validate-pr: 参数不完整。 (incomplete arguments)"
+            print(message, file=sys.stderr)
             return 1
         raise
 
     errors = title_errors(title.strip())
-    errors.extend(section_errors(parse_sections(body)))
+    sections, parse_errors = parse_sections(body)
+    errors.extend(parse_errors)
+    errors.extend(section_errors(sections))
     if errors:
         for error in errors:
             print(error, file=sys.stderr)
