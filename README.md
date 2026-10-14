@@ -10,7 +10,7 @@ Executable product-management skills for AI agents.
 | Skill | 用途 |
 |-------|------|
 | [`worth-it-or-not`](skills/worth-it-or-not/SKILL.md) | 先读项目事实，再判定值不值得做；缺口用 ≤3 题追问补齐 |
-| [`product-design-philosophy`](skills/product-design-philosophy/SKILL.md) | 方向确定后打磨体验与文案；对外给可执行修改 |
+| [`product-design-philosophy`](skills/product-design-philosophy/SKILL.md) | 方向确定后，以产品价值主张打磨体验、文案、结构与路径；对外给可执行方案 |
 | [`product-research`](skills/product-research/SKILL.md) | 行业摸底与竞品分析 |
 | [`product-spec`](skills/product-spec/SKILL.md) | 产品规格文档（业务层）：目标、结构与流程、故事、规则与验收 |
 | [`tech-spec`](skills/tech-spec/SKILL.md) | 技术规格文档：须基于产品规格，写架构、接口契约、实现决策与测试决策 |
