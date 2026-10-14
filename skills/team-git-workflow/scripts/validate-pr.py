@@ -9,6 +9,8 @@ Usage:
   validate-pr.py --title "feat: add summary" --body "## 摘要\\n..."
 
 Required sections / 必填: 摘要 Summary, 变更 Changes, 验证 Validation.
+验证节也接受「应测」和「Test plan」。这一节应写评审应测的清单。
+脚本不要求、也不检查「未测」或「跑过」。
 Optional sections are omitted when they do not apply. If present, they need
 real content. 可选节（风险与说明、相关问题）不适用时省略；写了就不能是占位符。
 
@@ -26,7 +28,7 @@ from pathlib import Path
 REQUIRED: tuple[tuple[str, tuple[str, ...]], ...] = (
     ("摘要", ("摘要", "summary")),
     ("变更", ("变更", "changes")),
-    ("验证", ("验证", "validation")),
+    ("验证", ("验证", "应测", "validation", "test plan", "验证 / test plan", "验证 / validation", "应测 / test plan")),
 )
 OPTIONAL: tuple[tuple[str, tuple[str, ...]], ...] = (
     ("风险与说明", ("风险与说明", "risks and notes", "risks")),
@@ -153,7 +155,9 @@ def section_errors(sections: dict[str, str]) -> list[str]:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="检查 PR 标题与默认正文必填节")
+    parser = argparse.ArgumentParser(
+        description="检查 PR 标题与默认正文必填节。验证节可用「应测」或 Test plan；不要求正文出现「未测」或「跑过」。"
+    )
     parser.add_argument("--title", help="PR 标题")
     parser.add_argument("--title-file", help="含有 PR 标题的文件")
     parser.add_argument("--body", help="PR 正文")

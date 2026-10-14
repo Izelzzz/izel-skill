@@ -12,7 +12,7 @@
 2. 从 `main` 创建 `fix/oauth-token-refresh`。运行 `scripts/validate-branch.sh fix/oauth-token-refresh`。
 3. 一次提交：`fix(auth): refresh oauth tokens before expiry`。只暂存这次修复的文件。
 4. 只推送 `fix/oauth-token-refresh`。
-5. 按 `pr-rules.md` 写标题和正文，通过 `scripts/validate-pr.py` 之后再创建 PR。目标是用户点名的 `main`。
+5. 按 `pr-rules.md` 写标题和正文。验证节只列评审应测的命令、场景和边界，不写跑过或未测。通过 `scripts/validate-pr.py` 之后再创建 PR。目标是用户点名的 `main`。
 6. 核实真实 URL。不合入。不删除 `fix/oauth-token-refresh`。
 
 任务做完但用户没有要求 PR 时：不要创建 PR。分支可以留在本地；推送到远程也要符合用户对这次交付的授权。不要改成直推 `main`。
