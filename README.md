@@ -31,7 +31,7 @@ cp -R skills/* ./.agents/skills/
 
 ## 评测
 
-`evals/evals.json` 提供一套面向四 skill 的真实用户口吻提示，用于触发与产出对照。可按 skill-creator 流程补 assertions 并跑 benchmark。
+`evals/evals.json` 覆盖当前套件：worth-it-or-not、product-design-philosophy、product-spec、tech-spec、team-git-workflow，以及一条 product-research。提示为中文用户口吻，assertions 对照各 skill 现行对外契约。可按 skill-creator 流程跑 benchmark。
 
 ## 文风
 
