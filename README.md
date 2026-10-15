@@ -46,6 +46,14 @@ cp -R skills/* ~/.claude/skills/
 cp -R skills/* ./.agents/skills/
 ```
 
+## 文档落盘
+
+完整的产品规格与技术规格默认写进当前仓库的 [`docs/`](docs/README.md)。文件名例如 `docs/<短标题>-产品规格.md`、`docs/<短标题>-技术规格.md`。用户指定了路径时用该路径。没有可写仓库时，改为在对话中给出全文，并说明未能落盘。
+
+## 评测
+
+[`evals/evals.json`](evals/evals.json) 覆盖本套件：worth-it-or-not、product-design-philosophy、product-spec、tech-spec、team-git-workflow，以及 product-research。提示为中文用户口吻，assertions 对照各 skill 的对外契约。可按 skill-creator 流程跑 benchmark。
+
 ## License
 
 MIT © 2026 Izelzzz
