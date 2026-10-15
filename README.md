@@ -2,8 +2,6 @@
 
 面向 Agent 的可执行产品管理 skills：先判断值不值得做，再按需打磨与调研，然后写产品规格和技术规格。
 
-写法遵循 skill-creator：description 负责何时触发，正文用祈使句和固定输出骨架。
-
 ## Skills
 
 | Skill | 用途 |
@@ -47,18 +45,6 @@ CLI 不可用时，可以手动复制：
 cp -R skills/* ~/.claude/skills/
 cp -R skills/* ./.agents/skills/
 ```
-
-## 文档落盘
-
-完整的产品规格与技术规格默认写进当前仓库的 [`docs/`](docs/README.md)。文件名例如 `docs/<短标题>-产品规格.md`、`docs/<短标题>-技术规格.md`。用户指定了路径时用该路径。没有可写仓库时，改为在对话中给出全文，并说明未能落盘。
-
-## 评测
-
-[`evals/evals.json`](evals/evals.json) 覆盖本套件：worth-it-or-not、product-design-philosophy、product-spec、tech-spec、team-git-workflow，以及 product-research。提示为中文用户口吻，assertions 对照各 skill 的对外契约。可按 skill-creator 流程跑 benchmark。
-
-## 文风
-
-参考 [obra/superpowers](https://github.com/obra/superpowers)、[mattpocock/skills](https://github.com/mattpocock/skills)，以及 Anthropic skill-creator：触发放 description，正文用祈使句、固定模板和短例。句子短，用词稳定。
 
 ## License
 
