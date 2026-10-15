@@ -6,6 +6,7 @@
 
 | Skill | 用途 |
 |-------|------|
+| [`skill-dispatch`](skills/skill-dispatch/SKILL.md) | 入口路由。意图不清或一次包含多步产品管理请求时，选定下一步该读的 skill，再交出去执行 |
 | [`worth-it-or-not`](skills/worth-it-or-not/SKILL.md) | 先读项目事实，再判定值不值得做。首轮只出一道灵魂拷问；作答后再追问，最多 3 题 |
 | [`product-design-philosophy`](skills/product-design-philosophy/SKILL.md) | 方向确定后，按产品价值主张打磨体验、文案、结构与路径 |
 | [`product-research`](skills/product-research/SKILL.md) | 行业摸底与竞品分析，结论带来源 |
@@ -14,6 +15,8 @@
 | [`team-git-workflow`](skills/team-git-workflow/SKILL.md) | 建分支、提交、推送、开 PR 或处理冲突前先预检，保护已有改动与共享历史 |
 
 ## 建议顺序
+
+意图不清、不知道从哪开始，或一次提出多步产品管理请求时，先用 [`skill-dispatch`](skills/skill-dispatch/SKILL.md) 作入口路由。它只选定下一步该读的 skill，不代替那个 skill 干活。
 
 worth-it-or-not →（按需）product-design-philosophy / product-research → product-spec → tech-spec。
 
