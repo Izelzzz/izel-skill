@@ -92,8 +92,18 @@ ALWAYS use this exact structure. 评审已有技术文档时也按这些标题�
 
 按 `references/sections.md` 填写。同一轮若产品规格刚刚写出，以该文为合同，另起一篇，不插入产品规格的八段。
 
+## 落盘
+
+产出完整技术规格时，写入仓库的 `docs/`。目录不存在就创建。默认文件名：`docs/<短标题或slug>-技术规格.md`。短标题与产品规格同一事项对齐，简短可读。用户指定了路径或文件名时，用该路径。不要覆盖产品规格文件。
+
+对话以一行开始：`已写入 docs/<文件名>`。文件是交付物。调用方仍要在对话里看到模板时，这一行之后附上已写入的同一正文，不要另写一版。
+
+没有可写仓库时，不要假装已经落盘。在对话中按上面的模板输出全文，并加一行：当前没有可写仓库，规格只在对话中给出。
+
+「尚无产品规格」不是完整技术规格，只在对话中输出，不写入 `docs/`。
+
 ## Example
 
 **Input：** 「产品规格已经有了『商家批量导出订单』。接口怎么定，验收怎么实现？」
 
-**Output：** 先 Read 该产品规格。没有可引用的验收与业务规则则停止，并只输出「尚无产品规格」。有则 Read `skills/tech-spec/references/sections.md`，再 Read `skills/tech-spec/references/example.md`，按该示例的详略另起一篇。不新增产品能力。
+**Output：** 先 Read 该产品规格。没有可引用的验收与业务规则则停止，并只输出「尚无产品规格」。有则 Read `skills/tech-spec/references/sections.md`，再 Read `skills/tech-spec/references/example.md`，按该示例的详略另起一篇。不新增产品能力。成稿写入 `docs/`，例如 `docs/商家批量导出订单-技术规格.md`。
