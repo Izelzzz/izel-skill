@@ -6,7 +6,7 @@
 
 | Skill | 用途 |
 |-------|------|
-| [`worth-it-or-not`](skills/worth-it-or-not/SKILL.md) | 先读项目事实，再判定值不值得做。首轮只出一道灵魂拷问；作答后再追问，最多 3 题 |
+| [`worth-it-or-not`](skills/worth-it-or-not/SKILL.md) | 先读项目事实，再判定值不值得做。首轮只出一道灵魂拷问；作答后先消化，再按仍缺的闭合条件追问（每轮最多 3 题）。「可以继续谈方案」且仍缺为「无」之后才进入下游 skill |
 | [`product-design-philosophy`](skills/product-design-philosophy/SKILL.md) | 方向确定后，按产品价值主张打磨体验、文案、结构与路径 |
 | [`product-research`](skills/product-research/SKILL.md) | 行业摸底与竞品分析，结论带来源 |
 | [`product-spec`](skills/product-spec/SKILL.md) | 产品规格（业务层）：目标、角色与流程、故事、规则、边界与验收。不写接口与实现 |
@@ -15,9 +15,9 @@
 
 ## 建议顺序
 
-worth-it-or-not →（按需）product-design-philosophy / product-research → product-spec → tech-spec。
+worth-it-or-not 给出「可以继续谈方案」且回答消化的仍缺为「无」之后，再按需进入 product-design-philosophy / product-research，然后 product-spec，最后 tech-spec。
 
-业务问题还不清楚时，先做 worth-it-or-not，不要直接写规格。tech-spec 只实现已有产品规格，不另立业务范围。
+状态仍是「先补齐这几件事再谈」时，规格与下游 skill 停在 worth-it-or-not。tech-spec 只实现已有产品规格。
 
 Git 操作用 team-git-workflow。它不插入上面的产品顺序。
 
