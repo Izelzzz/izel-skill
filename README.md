@@ -7,6 +7,7 @@
 | Skill | 用途 |
 |-------|------|
 | [`skill-dispatch`](skills/skill-dispatch/SKILL.md) | 入口路由。意图不清或一次包含多步产品管理请求时，选定下一步该读的 skill，再交出去执行 |
+| [`structured-thinking`](skills/structured-thinking/SKILL.md) | 把零散想法和模糊问题整理成清晰的问题定义、判断和可验证的行动 |
 | [`worth-it-or-not`](skills/worth-it-or-not/SKILL.md) | 先读项目事实，再判定值不值得做。首轮只出一道灵魂拷问；作答后再追问，最多 3 题 |
 | [`product-design-philosophy`](skills/product-design-philosophy/SKILL.md) | 方向确定后，按产品价值主张打磨体验、文案、结构与路径 |
 | [`product-research`](skills/product-research/SKILL.md) | 行业摸底与竞品分析，结论带来源 |
@@ -19,6 +20,8 @@
 意图不清、不知道从哪开始，或一次提出多步产品管理请求时，先用 [`skill-dispatch`](skills/skill-dispatch/SKILL.md) 作入口路由。它只选定下一步该读的 skill，不代替那个 skill 干活。
 
 worth-it-or-not →（按需）product-design-philosophy / product-research → product-spec → tech-spec。
+
+思路混乱、问题本身还没说清时，用 [`structured-thinking`](skills/structured-thinking/SKILL.md) 把问题定义和判断整理清楚，再进入或与这些产品 skills 一起推进。
 
 业务问题还不清楚时，先做 worth-it-or-not，不要直接写规格。tech-spec 只实现已有产品规格，不另立业务范围。
 
