@@ -6,7 +6,7 @@
 
 | Skill | 用途 |
 |-------|------|
-| [`skill-dispatch`](skills/skill-dispatch/SKILL.md) | 入口路由。意图不清或一次包含多步产品管理请求时，选定下一步该读的 skill，再交出去执行 |
+| [`skill-dispatch`](skills/skill-dispatch/SKILL.md) | 入口路由。思路混乱、意图不清，或一次包含多步产品管理请求时，选定下一步该读的 skill，再交出去执行 |
 | [`structured-thinking`](skills/structured-thinking/SKILL.md) | 把零散想法和模糊问题整理成清晰的问题定义、判断和可验证的行动 |
 | [`worth-it-or-not`](skills/worth-it-or-not/SKILL.md) | 先读项目事实，再判定值不值得做。首轮只出一道灵魂拷问；作答后先消化，再按需追问。判断闭合后才进入下游 skill |
 | [`product-design-philosophy`](skills/product-design-philosophy/SKILL.md) | 方向确定后，按产品价值主张打磨体验、文案、结构与路径 |
@@ -21,7 +21,7 @@
 
 worth-it-or-not 给出「可以继续谈方案」，或用户明确拍板继续谈之后，再按需进入 product-design-philosophy / product-research，然后 product-spec，最后 tech-spec。
 
-思路混乱、问题本身还没说清时，用 [`structured-thinking`](skills/structured-thinking/SKILL.md) 把问题定义和判断整理清楚，再进入或与这些产品 skills 一起推进。
+思路混乱、问题本身还没说清时，[`skill-dispatch`](skills/skill-dispatch/SKILL.md) 把下一步交给 [`structured-thinking`](skills/structured-thinking/SKILL.md)，由它把问题定义和判断整理清楚，再进入或与这些产品 skills 一起推进。
 
 判断停在「先补齐这几件事再谈」或「建议不做」时，体验打磨和规格留在 worth-it-or-not。tech-spec 只实现已有产品规格。
 
