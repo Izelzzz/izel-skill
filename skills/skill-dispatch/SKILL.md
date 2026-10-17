@@ -37,7 +37,7 @@ description: >
 1. **当前动作是 Git。** 交给 `team-git-workflow`。它不插入产品顺序。同一句话里产品工作还没做、Git 只是收尾时，先走产品闸门；真正要执行 git 时再交这个 skill。
 2. **多个产品 skill 都适用。** 选产品顺序里最早一个尚未完成的闸门：worth-it-or-not，然后按需的 product-design-philosophy 或 product-research，然后 product-spec，最后 tech-spec。后面的 skill 默认前面的闸门已经闭合。业务问题没闭合就打磨或写规格，会把错误问题写进文档。
 3. **用对话和仓库里已有的事实判断闸门**，不要在本 skill 里代做审查：
-   - 没有明确的做 / 不做 / 先不做，或用户仍在改问题本身 → `worth-it-or-not`。未闭合前不要打磨，不要写规格。
+   - 还没有「可以继续谈方案」，用户也还没明确拍板继续谈，或用户仍在改问题本身 → `worth-it-or-not`。判断闭合前，打磨和规格留在 worth-it-or-not。
    - 方向已定，且这句是在打磨体验、文案、结构或路径 → `product-design-philosophy`。
    - 这句是在要行业、竞品或带来源的结论 → `product-research`。2a 与 2b 都像当前句的主题时，选更直接的那一个。
    - 要业务层规格（目标、角色、故事、规则、边界、验收），且值不值得做已闭合 → `product-spec`。
