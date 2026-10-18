@@ -45,21 +45,13 @@ npx skills add Izelzzz/izel-skill -a cursor -y
 
 `-l` 只列出不安装，`--skill` 只装一个，`-a` 指定 agent，`-y` 跳过确认。
 
-更新本仓库已安装的八个 skill 时，在 `npx skills update` 后写上这些名称：
+本仓库按仓库版本整体更新。把已安装的套件同步到当前内容时，重新执行同一条安装命令：
 
 ```bash
-npx skills update \
-  skill-dispatch \
-  structured-thinking \
-  worth-it-or-not \
-  product-design-philosophy \
-  product-research \
-  product-spec \
-  tech-spec \
-  team-git-workflow
+npx skills add Izelzzz/izel-skill
 ```
 
-要按本仓库当前内容重新安装，再执行 `npx skills add Izelzzz/izel-skill`。
+安装时加过的参数（例如 `-a`、`-y`）照原样带上。
 
 CLI 不可用时，可以手动复制：
 
