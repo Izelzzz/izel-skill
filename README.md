@@ -41,10 +41,25 @@ npx skills add Izelzzz/izel-skill
 npx skills add Izelzzz/izel-skill -l
 npx skills add Izelzzz/izel-skill --skill worth-it-or-not
 npx skills add Izelzzz/izel-skill -a cursor -y
-npx skills update
 ```
 
-`-l` 只列出不安装，`--skill` 只装一个，`-a` 指定 agent，`-y` 跳过确认。`npx skills update` 把已安装的 skills 更新到最新版本。
+`-l` 只列出不安装，`--skill` 只装一个，`-a` 指定 agent，`-y` 跳过确认。
+
+更新本仓库已安装的八个 skill 时，在 `npx skills update` 后写上这些名称：
+
+```bash
+npx skills update \
+  skill-dispatch \
+  structured-thinking \
+  worth-it-or-not \
+  product-design-philosophy \
+  product-research \
+  product-spec \
+  tech-spec \
+  team-git-workflow
+```
+
+要按本仓库当前内容重新安装，再执行 `npx skills add Izelzzz/izel-skill`。
 
 CLI 不可用时，可以手动复制：
 
@@ -57,41 +72,19 @@ cp -R skills/* ./.agents/skills/
 
 当前版本是 **0.1.0**（[`VERSION`](VERSION)）。
 
-把本机已安装的 skills 同步到仓库当前内容：
+查看本仓库版本：读 [`VERSION`](VERSION)，看 [`CHANGELOG.md`](CHANGELOG.md)，或打开 [Releases](https://github.com/Izelzzz/izel-skill/releases)。也可以直接取远程的 `VERSION`：
 
 ```bash
-npx skills update
+curl -sL https://raw.githubusercontent.com/Izelzzz/izel-skill/main/VERSION
 ```
 
-`npx skills update` 读取仓库里每个 skill 的内容哈希，并与本机已安装副本比较。哈希不同的 skill 会写成仓库里的当前内容。仓库版本写在本页、[`CHANGELOG.md`](CHANGELOG.md) 和 [GitHub Releases](https://github.com/Izelzzz/izel-skill/releases)。
+`npx skills --version` 与 `npx skills -v` 打印的是 **skills CLI** 的版本。本仓库版本以上面的 `VERSION`、[`CHANGELOG.md`](CHANGELOG.md) 和 [Releases](https://github.com/Izelzzz/izel-skill/releases) 为准。
 
-`skills/` 或其他含 `SKILL.md` 的目录有改动时，在同一 PR 里把 `VERSION` 改为新的 `X.Y.Z`，并在 `CHANGELOG.md` 写下该版本的变更。可以这样写入版本号和一节变更说明：
+`npx skills list` 与 `npx skills ls` 列出已安装的 skill 及其路径。
 
-```bash
-scripts/bump-version.sh 0.2.0 "一句话说明这次技能变更"
-```
+`npx skills update` 按内容哈希把已安装副本对齐到最新 skill 内容。
 
-合入后发布首个版本。`CHANGELOG.md` 页脚的 compare 与 Releases 链接就是这个标签的地址：
-
-```bash
-git tag v0.1.0 && git push origin v0.1.0
-```
-
-之后每次合入版本变更，按 `VERSION` 打同样的标签并推送。GitHub Actions 用 `CHANGELOG.md` 里该版本的小节创建 Release：
-
-```bash
-version=$(tr -d '[:space:]' < VERSION)
-git tag "v${version}"
-git push origin "v${version}"
-```
-
-## 文档落盘
-
-完整的产品规格与技术规格默认写进当前仓库的 [`docs/`](docs/README.md)。文件名例如 `docs/<短标题>-产品规格.md`、`docs/<短标题>-技术规格.md`。用户指定了路径时用该路径。没有可写仓库时，改为在对话中给出全文，并说明未能落盘。
-
-## 评测
-
-[`evals/evals.json`](evals/evals.json) 覆盖本套件：worth-it-or-not（首轮与作答后路径）、skill-dispatch、structured-thinking、product-design-philosophy、product-spec、tech-spec、team-git-workflow，以及 product-research。提示为中文用户口吻，assertions 对照各 skill 的对外契约。可按 skill-creator 流程跑 benchmark。
+维护与发布见 [CONTRIBUTING.md](CONTRIBUTING.md)。
 
 ## License
 
