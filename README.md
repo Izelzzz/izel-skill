@@ -58,7 +58,7 @@ cp -R skills/* ./.agents/skills/
 
 ## 评测
 
-[`evals/evals.json`](evals/evals.json) 覆盖本套件：worth-it-or-not（首轮与作答后路径）、product-design-philosophy、product-spec、tech-spec、team-git-workflow，以及 product-research。提示为中文用户口吻，assertions 对照各 skill 的对外契约。可按 skill-creator 流程跑 benchmark。
+[`evals/evals.json`](evals/evals.json) 覆盖本套件：worth-it-or-not（首轮与作答后路径）、skill-dispatch、structured-thinking、product-design-philosophy、product-spec、tech-spec、team-git-workflow，以及 product-research。提示为中文用户口吻，assertions 对照各 skill 的对外契约。可按 skill-creator 流程跑 benchmark。
 
 ## License
 
