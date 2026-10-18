@@ -88,9 +88,17 @@ if ! git cat-file -e "${HEAD_COMMIT}:CHANGELOG.md" 2>/dev/null; then
   fail "根目录需要 CHANGELOG.md，并在其中记录 ${head_version}。"
 fi
 if git cat-file -e "${HEAD_COMMIT}:README.md" 2>/dev/null; then
-  readme=$(git show "${HEAD_COMMIT}:README.md")
   escaped_version=$(printf '%s' "$head_version" | sed 's/[.[\*^$()|+?{}]/\\&/g')
-  if ! printf '%s\n' "$readme" | grep -Eq "(^|[^0-9.])${escaped_version}([^0-9.]|$)"; then
+  # 「版本」标题到下一节或第一个代码块之间，避免示例命令里的其他版本号算进去。
+  version_section=$(git show "${HEAD_COMMIT}:README.md" | awk '
+    /^## / && index($0, "版本") { capture = 1; next }
+    capture && (/^## / || /^```/) { exit }
+    capture { print }
+  ')
+  if [[ -z "${version_section//[[:space:]]/}" ]]; then
+    fail "README.md 需要有「版本」节，并在该节写上当前 VERSION（${head_version}）。"
+  fi
+  if ! printf '%s\n' "$version_section" | grep -Eq "(^|[^0-9.])${escaped_version}([^0-9.]|$)"; then
     fail "README.md 的版本节需要写上当前 VERSION（${head_version}）。"
   fi
 fi

@@ -48,7 +48,14 @@ fi
 
 today=$(date -u +%Y-%m-%d)
 section_file=$(mktemp)
-trap 'rm -f "$section_file"' EXIT
+footer_tmp=""
+cleanup() {
+  rm -f "$section_file"
+  if [[ -n "${footer_tmp}" ]]; then
+    rm -f "$footer_tmp"
+  fi
+}
+trap cleanup EXIT
 cat >"$section_file" <<EOF
 ## [${version}] - ${today}
 
@@ -76,5 +83,46 @@ awk '
 ' secfile="$section_file" CHANGELOG.md >"$tmp"
 mv "$tmp" CHANGELOG.md
 
+repo_url=$(sed -nE 's#^\[[^]]+\]: (https://github.com/[^/]+/[^/]+)/.*#\1#p' CHANGELOG.md | head -n 1)
+if [[ -z "$repo_url" ]]; then
+  repo_url="https://github.com/Izelzzz/izel-skill"
+fi
+unreleased_url="${repo_url}/compare/v${version}...HEAD"
+release_url="${repo_url}/releases/tag/v${version}"
+footer_tmp=$(mktemp)
+awk -v version="$version" -v unreleased_url="$unreleased_url" -v release_url="$release_url" '
+  BEGIN {
+    unreleased_key = "[Unreleased]: "
+    version_key = "[" version "]: "
+  }
+  index($0, unreleased_key) == 1 {
+    print unreleased_key unreleased_url
+    unreleased_seen = 1
+    if (!version_seen) {
+      print version_key release_url
+      version_seen = 1
+      inserted_early = 1
+    }
+    next
+  }
+  index($0, version_key) == 1 {
+    if (inserted_early) next
+    print version_key release_url
+    version_seen = 1
+    next
+  }
+  { print }
+  END {
+    if (!unreleased_seen) {
+      print ""
+      print unreleased_key unreleased_url
+    }
+    if (!version_seen) {
+      print version_key release_url
+    }
+  }
+' CHANGELOG.md >"$footer_tmp"
+mv "$footer_tmp" CHANGELOG.md
+
 echo "VERSION=${version}"
-echo "已在 CHANGELOG.md 写入 [${version}]。"
+echo "已在 CHANGELOG.md 写入 [${version}]，并更新页脚链接。"

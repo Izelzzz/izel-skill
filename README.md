@@ -64,7 +64,13 @@ npx skills update
 scripts/bump-version.sh 0.2.0 "一句话说明这次技能变更"
 ```
 
-合入后，维护者打与 `VERSION` 相同的标签并推送。推送 `vX.Y.Z` 后，GitHub Actions 用 `CHANGELOG.md` 里该版本的小节创建 Release：
+合入后发布首个版本。`CHANGELOG.md` 页脚的 compare 与 Releases 链接就是这个标签的地址：
+
+```bash
+git tag v0.1.0 && git push origin v0.1.0
+```
+
+之后每次合入版本变更，按 `VERSION` 打同样的标签并推送。GitHub Actions 用 `CHANGELOG.md` 里该版本的小节创建 Release：
 
 ```bash
 version=$(tr -d '[:space:]' < VERSION)
