@@ -45,7 +45,7 @@ npx skills add Izelzzz/izel-skill -a cursor -y
 
 `-l` 只列出不安装，`--skill` 只装一个，`-a` 指定 agent，`-y` 跳过确认。
 
-本仓库按仓库版本整体更新。把已安装的套件同步到当前内容时，重新执行同一条安装命令：
+本仓库按仓库版本整体更新。把已安装的套件同步到当前内容时，重新执行同一条安装命令。这是本仓库套件的推荐更新方式：
 
 ```bash
 npx skills add Izelzzz/izel-skill
@@ -74,7 +74,7 @@ curl -sL https://raw.githubusercontent.com/Izelzzz/izel-skill/main/VERSION
 
 `npx skills list` 与 `npx skills ls` 列出已安装的 skill 及其路径。
 
-`npx skills update` 按内容哈希把已安装副本对齐到最新 skill 内容。
+`npx skills update` 按内容哈希更新已安装 skill（可能牵动全局其它 skill）。同步本仓库套件时，用上方「安装」节的重新 `npx skills add Izelzzz/izel-skill`。
 
 维护与发布见 [CONTRIBUTING.md](CONTRIBUTING.md)。
 
