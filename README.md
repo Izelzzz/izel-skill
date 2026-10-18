@@ -35,9 +35,10 @@ npx skills add Izelzzz/izel-skill
 npx skills add Izelzzz/izel-skill -l
 npx skills add Izelzzz/izel-skill --skill worth-it-or-not
 npx skills add Izelzzz/izel-skill -a cursor -y
+npx skills update
 ```
 
-`-l` 只列出不安装，`--skill` 只装一个，`-a` 指定 agent，`-y` 跳过确认。
+`-l` 只列出不安装，`--skill` 只装一个，`-a` 指定 agent，`-y` 跳过确认。`npx skills update` 把已安装的 skills 更新到最新版本。
 
 CLI 不可用时，可以手动复制：
 
