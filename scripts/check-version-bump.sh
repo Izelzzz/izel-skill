@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# 技能目录有改动时，要求同一变更里的 VERSION 与基线不同，并且 CHANGELOG.md 也有改动。
+# 技能目录有改动时，要求同一变更里的 VERSION 与基线不同，CHANGELOG.md 有改动，
+# 并且 CHANGELOG.md 含有与新版本对应的 Keep a Changelog 标题（## [X.Y.Z]）。
 # 用法: scripts/check-version-bump.sh [base_sha] [head_sha]
 set -euo pipefail
 
@@ -40,6 +41,14 @@ read_version() {
     return
   fi
   git show "${sha}:VERSION" | tr -d '[:space:]'
+}
+
+changelog_has_version_section() {
+  local sha="$1"
+  local version="$2"
+  local escaped
+  escaped=$(printf '%s' "$version" | sed 's/[.[\*^$()|+?{}]/\\&/g')
+  git show "${sha}:CHANGELOG.md" | grep -E -q "^## \\[${escaped}\\]([[:space:]]|$)"
 }
 
 collect_prefixes() {
@@ -145,4 +154,8 @@ if [[ "$changelog_changed" -eq 0 ]]; then
   fail "skill 变更时请 bump VERSION 并更新 CHANGELOG。" "VERSION 已从 ${base_version:-（无）} 改为 ${head_version}。请同时更新 CHANGELOG.md。变更文件：${changed_list}"
 fi
 
-ok "技能目录有改动，VERSION ${base_version:-（无）} → ${head_version}，CHANGELOG.md 已更新。"
+if ! changelog_has_version_section "$HEAD_COMMIT" "$head_version"; then
+  fail "skill 变更时请 bump VERSION 并更新 CHANGELOG。" "VERSION 已改为 ${head_version}，但 CHANGELOG.md 没有对应小节。请加上标题 ## [${head_version}]。"
+fi
+
+ok "技能目录有改动，VERSION ${base_version:-（无）} → ${head_version}，CHANGELOG.md 含 ## [${head_version}]。"

@@ -34,8 +34,16 @@ fi
 
 printf '%s\n' "$version" >VERSION
 
+# GNU sed 接受 sed -i；BSD sed（macOS）要求备份后缀。-i.bak 两边都能用。
+sed_inplace() {
+  local file="$1"
+  shift
+  sed -i.bak "$@" "$file"
+  rm -f "${file}.bak"
+}
+
 if [[ -f README.md ]] && grep -q '当前版本是 \*\*' README.md; then
-  sed -i -E "s/当前版本是 \\*\\*[0-9]+\\.[0-9]+\\.[0-9]+\\*\\*/当前版本是 **${version}**/" README.md
+  sed_inplace README.md -E "s/当前版本是 \\*\\*[0-9]+\\.[0-9]+\\.[0-9]+\\*\\*/当前版本是 **${version}**/"
 fi
 
 today=$(date -u +%Y-%m-%d)

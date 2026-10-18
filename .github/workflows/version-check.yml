@@ -26,6 +26,7 @@ jobs:
           git fetch origin "+refs/pull/${{ github.event.pull_request.number }}/head:refs/remotes/origin/pr-head"
 
       - name: Check version bump
+        # 技能目录有改动时：VERSION 必须变化，CHANGELOG.md 必须改动，且含 ## [X.Y.Z] 小节。
         run: |
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
             base="${{ github.event.pull_request.base.sha }}"
