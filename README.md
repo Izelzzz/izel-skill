@@ -46,6 +46,32 @@ cp -R skills/* ~/.claude/skills/
 cp -R skills/* ./.agents/skills/
 ```
 
+## 版本
+
+当前版本是 **0.1.0**（[`VERSION`](VERSION)）。
+
+把本机已安装的 skills 同步到仓库当前内容：
+
+```bash
+npx skills update
+```
+
+`npx skills update` 读取仓库里每个 skill 的内容哈希，并与本机已安装副本比较。哈希不同的 skill 会写成仓库里的当前内容。仓库版本写在本页、[`CHANGELOG.md`](CHANGELOG.md) 和 [GitHub Releases](https://github.com/Izelzzz/izel-skill/releases)。
+
+`skills/` 或其他含 `SKILL.md` 的目录有改动时，在同一 PR 里把 `VERSION` 改为新的 `X.Y.Z`，并在 `CHANGELOG.md` 写下该版本的变更。可以这样写入版本号和一节变更说明：
+
+```bash
+scripts/bump-version.sh 0.2.0 "一句话说明这次技能变更"
+```
+
+合入后，维护者打与 `VERSION` 相同的标签并推送。推送 `vX.Y.Z` 后，GitHub Actions 用 `CHANGELOG.md` 里该版本的小节创建 Release：
+
+```bash
+version=$(tr -d '[:space:]' < VERSION)
+git tag "v${version}"
+git push origin "v${version}"
+```
+
 ## 文档落盘
 
 完整的产品规格与技术规格默认写进当前仓库的 [`docs/`](docs/README.md)。文件名例如 `docs/<短标题>-产品规格.md`、`docs/<短标题>-技术规格.md`。用户指定了路径时用该路径。没有可写仓库时，改为在对话中给出全文，并说明未能落盘。
