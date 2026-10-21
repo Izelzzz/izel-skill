@@ -4,11 +4,16 @@
 
 ## [Unreleased]
 
+### 修正
+
+- 补全 0.1.0 套件清单：漏记的 skill-dispatch 与 structured-thinking。
+- 迭代期过程笔记 `OPTIMIZE-NOTES.md`、`PREVIEW-principles-philosophy.md` 从根目录移入 `docs/archive/`。
+
 ## [0.1.0] - 2026-10-18
 
 ### 新增
 
-- 首个仓库级版本。套件包含 worth-it-or-not、product-design-philosophy、product-research、product-spec、tech-spec、team-git-workflow。
+- 首个仓库级版本。套件包含 skill-dispatch、structured-thinking、worth-it-or-not、product-design-philosophy、product-research、product-spec、tech-spec、team-git-workflow。
 - 根目录 `VERSION` 与本变更记录。`skills/` 或其他含 `SKILL.md` 的目录有改动时，同一 PR 更新 `VERSION` 与本文件。
 - 推送与 `VERSION` 一致的 `vX.Y.Z` 标签时，用对应版本节创建 GitHub Release。
 

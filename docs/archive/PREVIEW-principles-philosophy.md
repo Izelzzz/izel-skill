@@ -2,7 +2,7 @@
 
 按当时的用户反馈：`product-design-principles` 更名为 `worth-it-or-not`；先读项目事实再判断；「业务建模」→「业务价值」。下面标成「iteration-3 快照」的三题追问，是那一版的对外形状。
 
-当前 `worth-it-or-not` 全文见 [`skills/worth-it-or-not/SKILL.md`](skills/worth-it-or-not/SKILL.md)。
+当前 `worth-it-or-not` 全文见 [`skills/worth-it-or-not/SKILL.md`](../../skills/worth-it-or-not/SKILL.md)。
 
 当前首轮：状态句，然后 `## 已掌握的事实`，然后恰好一道 `## 🔮 灵魂拷问`，写完即停。
 
@@ -16,7 +16,7 @@
 
 ### 当前全文见
 
-[`skills/worth-it-or-not/SKILL.md`](skills/worth-it-or-not/SKILL.md)
+[`skills/worth-it-or-not/SKILL.md`](../../skills/worth-it-or-not/SKILL.md)
 
 要点：
 
@@ -70,7 +70,7 @@
 
 ### 新版全文见
 
-[`skills/product-design-philosophy/SKILL.md`](skills/product-design-philosophy/SKILL.md)
+[`skills/product-design-philosophy/SKILL.md`](../../skills/product-design-philosophy/SKILL.md)
 
 交叉引用：方向未定时先做 `worth-it-or-not`（值不值得做）审查，再进入本 skill。
 
