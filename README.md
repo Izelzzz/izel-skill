@@ -13,7 +13,7 @@
 | [`product-research`](skills/product-research/SKILL.md) | 行业摸底与竞品分析，结论带来源 |
 | [`product-spec`](skills/product-spec/SKILL.md) | 产品规格（业务层）：目标、角色与流程、故事、规则、边界与验收。不写接口与实现 |
 | [`tech-spec`](skills/tech-spec/SKILL.md) | 技术规格：须已有产品规格。写架构、接口与数据契约、实现决策与测试决策 |
-| [`decision-record`](skills/decision-record/SKILL.md) | 取舍要拍板时，每条一行附建议请用户定；定下后写成决策记录：背景、目的、做法、为什么、代价，推翻时留痕 |
+| [`decision-record`](skills/decision-record/SKILL.md) | 取舍要拍板时，每条一行写出建议请用户定；定下后写成决策记录（背景、目的、做法、为什么、代价），记到用户选定的位置；推翻时留痕 |
 | [`team-git-workflow`](skills/team-git-workflow/SKILL.md) | 建分支、提交、推送、开 PR 或处理冲突前先预检，保护已有改动与共享历史 |
 
 ## 建议顺序
