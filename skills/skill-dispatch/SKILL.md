@@ -38,7 +38,7 @@ description: >
 按下面顺序做，命中即停。
 
 1. **当前动作是 Git。** 交给 `team-git-workflow`。它留在产品顺序旁边。同一句话里产品工作还没做、Git 只是收尾时，先走产品闸门；真正要执行 git 时再交这个 skill。
-2. **当前动作是请用户拍板或记录决策。** 交给 `decision-record`。记完回到原来的 skill 继续。
+2. **当前动作是请用户拍板，或把已拍板的取舍记进决策记录。** 交给 `decision-record`。记完回到原来的 skill 继续。要写技术规格里的「实现决策」「测试决策」时，不走这一步，按第 5 步交给 `tech-spec`。
 3. **问题本身还没成形。** 想法零散、问题还没定义，或这一轮要的是梳理逻辑、结构化思考，把散点收成问题定义、判断和可验证的下一步 → `structured-thinking`。同一句话里已经是一个待判定的需求或方案时，继续用下面的产品闸门。
 4. **多个产品 skill 都适用。** 选产品顺序里最早一个尚未完成的闸门：worth-it-or-not，然后按需的 product-design-philosophy 或 product-research，然后 product-spec，最后 tech-spec。后面的 skill 默认前面的闸门已经闭合。打磨和规格接在 worth-it-or-not 闭合之后。
 5. **用对话和仓库里已有的事实判断闸门**，判断留在目标 skill 里做：
