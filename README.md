@@ -13,6 +13,7 @@
 | [`product-research`](skills/product-research/SKILL.md) | 行业摸底与竞品分析，结论带来源 |
 | [`product-spec`](skills/product-spec/SKILL.md) | 产品规格（业务层）：目标、角色与流程、故事、规则、边界与验收。不写接口与实现 |
 | [`tech-spec`](skills/tech-spec/SKILL.md) | 技术规格：须已有产品规格。写架构、接口与数据契约、实现决策与测试决策 |
+| [`decision-record`](skills/decision-record/SKILL.md) | 取舍要拍板时，每条一行附建议请用户定；定下后写成决策记录：背景、目的、做法、为什么、代价，推翻时留痕 |
 | [`team-git-workflow`](skills/team-git-workflow/SKILL.md) | 建分支、提交、推送、开 PR 或处理冲突前先预检，保护已有改动与共享历史 |
 
 ## 建议顺序
@@ -25,7 +26,7 @@ worth-it-or-not 给出「可以继续谈方案」，或用户明确拍板继续�
 
 判断停在「先补齐这几件事再谈」或「建议不做」时，体验打磨和规格留在 worth-it-or-not。tech-spec 只实现已有产品规格。
 
-Git 操作用 team-git-workflow。它不插入上面的产品顺序。
+Git 操作用 team-git-workflow，请用户拍板和记录决策用 decision-record。它们不插入上面的产品顺序，任何一步中途都可以用。
 
 ## 安装
 
@@ -62,7 +63,7 @@ cp -R skills/* ./.agents/skills/
 
 ## 版本
 
-当前版本是 **0.1.0**（[`VERSION`](VERSION)）。
+当前版本是 **0.2.0**（[`VERSION`](VERSION)）。
 
 查看本仓库版本：读 [`VERSION`](VERSION)，看 [`CHANGELOG.md`](CHANGELOG.md)，或打开 [Releases](https://github.com/Izelzzz/izel-skill/releases)。也可以直接取远程的 `VERSION`：
 
