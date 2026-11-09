@@ -4,6 +4,13 @@
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-11-09
+
+### 新增
+
+- decision-record：取舍要拍板时，只列真有分歧的事项，每条一行写出建议做法和理由；拍板后写成决策记录（背景、目的、做法、为什么这样做、代价与后续），标题即结论，一条只管一件事，推翻旧决定时不删旧记录、两边留痕。项目没有决策列表时，先问用户记在仓库、Notion 等哪里。样板为 D-033。
+- skill-dispatch 把 decision-record 列为与产品顺序正交的 skill；README、`docs/README.md` 与评测用例同步。
+
 ### 修正
 
 - 补全 0.1.0 套件清单：漏记的 skill-dispatch 与 structured-thinking。
@@ -17,5 +24,6 @@
 - 根目录 `VERSION` 与本变更记录。`skills/` 或其他含 `SKILL.md` 的目录有改动时，同一 PR 更新 `VERSION` 与本文件。
 - 推送与 `VERSION` 一致的 `vX.Y.Z` 标签时，用对应版本节创建 GitHub Release。
 
-[Unreleased]: https://github.com/Izelzzz/izel-skill/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/Izelzzz/izel-skill/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/Izelzzz/izel-skill/releases/tag/v0.2.0
 [0.1.0]: https://github.com/Izelzzz/izel-skill/releases/tag/v0.1.0
